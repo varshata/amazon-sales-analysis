@@ -1,52 +1,3 @@
-drop table if exists retail;
-Create table Retail(
-transaction_id INT Primary key,
-Sale_date DATE,
-Sale_time TIME,
-customer_id INT,
-gender Char(10),
-age INT,
-Category VARCHAR(20), 
-quantity INT,
-price_per_unit FLOAT,
-cogs FLOAT,
-total_sales FLOAT
-);
-
-select * from retail;
-
-SELECT COUNT(*) FROM retail;
-SELECT COUNT(DISTINCT customer_id) FROM retail;
-SELECT DISTINCT category FROM retail;
-
-SELECT * FROM retail
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
-
-DELETE FROM retail
-
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
-
----Data Exploration----
----How many sales we have---
-select SUM(total_sales) from retail;
-
---retreive all columns for sales made on '2022-11-05'
-select * from retail 
-where sale_date='2022-11-05';
-
---retrieve all transactions where the category is 'clothing' and the quantity sold is more tahn 4 in the month of Nov-2022
-select transaction_id,category,quantity from retail
-where category='Clothing' AND quantity>4 AND To_char(sale_date, 'yyyy-mm')='2022-11';
-
---Write a SQL query to calculate the total sales (total_sale) for each category.:
-select
-
 drop table if exists amazon;
 
 create table amazon(
@@ -87,11 +38,6 @@ ALTER TABLE amazon
 ALTER COLUMN "index" TYPE INT
 USING NULLIF("index", '')::INT;
 
-SELECT 'INDEX' TYPE FROM AMAZON;
-
-ALTER TABLE AMAZON
-ALTER COLUMN "index" TYPE INT;
-
 ALTER TABLE amazon
 ALTER COLUMN "Date" TYPE DATE
 USING TO_DATE(NULLIF("Date", ''), 'DD-Mon-YY');
@@ -114,8 +60,8 @@ ALTER COLUMN "ship-postal-code" TYPE VARCHAR(20);
 
 select * from amazon;
 
---NET REVENUE--
-select Sum("Amount") as Net_revenue 
+--TOTAL REVENUE--
+select Sum("Amount") as Total_revenue 
 from amazon;
 
 --TOTAL QUANTITY ORDERED--
@@ -151,8 +97,6 @@ GROUP BY "Style", "SKU"
 ORDER BY product_sales DESC
 LIMIT 1;
 
-select "Order ID", "Courier Status" from amazon
-where "Courier Status"='Cancelled';
 
 --total cancelled orders--
 select COUNT(DISTINCT "Order ID") from amazon
@@ -201,8 +145,6 @@ group by "ship-city"
 order by Total_orders DESC
 limit 10;
 
---•	Which regions have the highest sales? 
-
 --•	How does B2B sales compare with non-B2B? 
 select "B2B", SUM("Amount") as Total_Sales
 from amazon
@@ -210,24 +152,13 @@ group by "B2B"
 order by Total_sales;
 
 --•	Which sizes sell the most? 
-select "Size", count(DISTInCT "Order ID") as total_Sales
+select "Size", count(DISTINCT "Order ID") as total_Sales
 from amazon
 group by "Size"
 order by total_Sales DESC
 limit 5;
 
 --•	Which categories have the highest average order value? 
-select "Category" , Sum("Amount") as order_value
-from amazon
-group by "Category";
-
-SELECT
-    "Category",
-    SUM("Amount") / COUNT(DISTINCT "Order ID") AS average_order_value
-FROM amazon
-GROUP BY "Category"
-ORDER BY average_order_value DESC;
-
 SELECT
     "Category",
     ROUND(
@@ -253,16 +184,10 @@ ORDER BY total_quantity DESC
 limit 10;
 
 --•	How many orders use promotions? 
-select COUNT("Order ID"), "promotion-ids" from amazon
-group by "promotion-ids";
-
-
-
 SELECT
     COUNT(DISTINCT "Order ID") AS promotion_orders
 FROM amazon
 WHERE "promotion-ids" <> 'No Promotion';
 
---•	Do promoted orders generate more/less revenue? 
 
 
